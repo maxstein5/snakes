@@ -33,7 +33,7 @@ void setup() {
       this.newPop = false;
       this.fromEach = this.popSize/files.length;
     }
-    this.popSize = 7000;
+    this.popSize = 4000;
     this.save = true;
   } else if (showcase) {
     this.size = 30;

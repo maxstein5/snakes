@@ -14,8 +14,7 @@ class Population{
   
   for(int i = 0; i < dim; i++) {
       for(int j = 0; j < dim; j++) {
-       board[i][j] = new IntList();
-       //board[i][j].ensureCapacity(size);
+       board[i][j] = new IntList(size);
       }
   }
   
@@ -41,8 +40,7 @@ class Population{
   
   for(int i = 0; i < dim; i++) {
       for(int j = 0; j < dim; j++) {
-       board[i][j] = new IntList();
-       //board[i][j].ensureCapacity(size);
+       board[i][j] = new IntList(size);
       }
   }
   
