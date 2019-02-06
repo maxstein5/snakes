@@ -1,6 +1,6 @@
 //For general settings:
 private int size = 30;
-private int snakeLength = 4;
+private int snakeLength = 6;
 private int seed = 5;
 
 private boolean training = true;
@@ -33,7 +33,7 @@ void setup() {
       this.newPop = false;
       this.fromEach = this.popSize/files.length;
     }
-    this.popSize = 4000;
+    this.popSize = 7000;
     this.save = true;
   } else if (showcase) {
     this.size = 30;

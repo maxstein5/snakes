@@ -4,7 +4,7 @@ class Food {
   private int dimension;
   private final int ID;
   
-  public Food(int size, int dimension, IntList[][] board, int ID) {
+  public Food(int size, int dimension, int[][][] board, int ID) {
     this.ID = ID;
     pos = new PVector();
     this.size = size;
@@ -21,14 +21,14 @@ class Food {
    rect(pos.x * size, pos.y * size, size, size);
   }
   
-  public void place(IntList[][] board) {
+  public void place(int[][][] board) {
     pos.x = floor(random(0,dimension));
     pos.y = floor(random(0,dimension));
     
-    while(board[(int)pos.x][(int)pos.y].hasValue(ID)) {
-      pos.x = floor(random(0,dimension));
-      pos.y = floor(random(0,dimension));
-    }
+    while(board[(int)pos.x][(int)pos.y][ID] == 1) {
+        pos.x = floor(random(0,dimension));
+        pos.y = floor(random(0,dimension));
+      }
   }
   
 }

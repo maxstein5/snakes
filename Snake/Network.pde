@@ -139,7 +139,7 @@ class Network {
   
   //------------------------------------------------------------------------- evolution methods
   
-  public Network clone(int max) {
+  public Network clone() {
     Network clone = new Network(NETWORK_LAYER_SIZES);
     clone.netSetup(weights, bias);
     return clone;
@@ -170,8 +170,8 @@ class Network {
   }
   
   public Network combineWith(Network parent) {
-    Network child = this.clone(1);
-    Network otherHalf = parent.clone(1);
+    Network child = this.clone();
+    Network otherHalf = parent.clone();
     
     float[][][] weights1 = child.weights();
     float[][][] weights2 = otherHalf.weights();

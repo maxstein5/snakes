@@ -7,22 +7,16 @@ class Population{
  private double bestFitAll = 0;
  private int bestLen = 0;
  
- private IntList[][] board;
+ private int[][][] board;
  
  Population(int size, int dim, int snakeLength, int numEach, String... fromFile) {
-  this.board = new IntList[dim][dim];
-  
-  for(int i = 0; i < dim; i++) {
-      for(int j = 0; j < dim; j++) {
-       board[i][j] = new IntList(size);
-      }
-  }
+  this.board = new int[dim][dim][size];
   
   bestLen = snakeLength; 
    
   players = new Player[size];
   for(int i = 0; i < size; i++) {
-   players[i] = new Player(height,height/dim,snakeLength,board,i+1);
+   players[i] = new Player(height,height/dim,snakeLength,board,i);
   }
   
   for(int i = 0; i < fromFile.length; i++) {
@@ -36,19 +30,13 @@ class Population{
  }
  
   Population(int size, int dim, int snakeLength) {
-  this.board = new IntList[dim][dim];
-  
-  for(int i = 0; i < dim; i++) {
-      for(int j = 0; j < dim; j++) {
-       board[i][j] = new IntList(size);
-      }
-  }
+  this.board = new int[dim][dim][size];
   
   bestLen = snakeLength; 
    
   players = new Player[size];
   for(int i = 0; i < size; i++) {
-   players[i] = new Player(height,height/dim,snakeLength,board,i+1);
+   players[i] = new Player(height,height/dim,snakeLength,board,i);
   }
 
   allTime = players[0];
@@ -71,14 +59,14 @@ class Population{
     deaths++;
     players[0].calculateFitness();
     fitnessSum -= players[0].fitness();
-    players[0] = allTime.clone();   
+    players[0] = allTime.clone(0);
   }
   
   if(players[1].dead()) {
     deaths++;
     players[1].calculateFitness();
     fitnessSum -= players[1].fitness();
-    players[1] = currentBest.clone();
+    players[1] = currentBest.clone(1);
   }
   
   for(int i = 0; i < players.length; i++) {
@@ -112,7 +100,7 @@ class Population{
      Player parent1 = selectParent();
      Player parent2 = selectParent();
      
-     players[i] = parent1.breedWith(parent2);
+     players[i] = parent1.breedWith(parent2, i);
      players[i].mutate(rate);
    }
   }
@@ -174,7 +162,7 @@ class Population{
   return players[0]; 
  }
  
- public IntList[][] board() {
+ public int[][][] board() {
   return board; 
  }
  

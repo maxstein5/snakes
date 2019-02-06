@@ -28,9 +28,9 @@ class World {
     
     for(int i = 0; i < size; i++) {
       for(int j = 0; j < size; j++) {
-        //if(main.board()[i][j].size() > 0) {
+        //if(main.board()[i][j][0] != 0) {
         //  stroke(0);
-        //  fill(main.board()[i][j].get(0));
+        //  fill(main.board()[i][j][0]);
         //} else {
         //  stroke(255);
         //  fill(255);
