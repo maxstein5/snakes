@@ -7,22 +7,14 @@ class Population{
  private double bestFitAll = 0;
  private int bestLen = 0;
  
- private IntList[][] board;
  
  Population(int size, int dim, int snakeLength, int numEach, String... fromFile) {
-  this.board = new IntList[dim][dim];
-  
-  for(int i = 0; i < dim; i++) {
-      for(int j = 0; j < dim; j++) {
-       board[i][j] = new IntList(size);
-      }
-  }
   
   bestLen = snakeLength; 
    
   players = new Player[size];
   for(int i = 0; i < size; i++) {
-   players[i] = new Player(height,height/dim,snakeLength,board,i+1);
+   players[i] = new Player(height,height/dim,snakeLength);
   }
   
   for(int i = 0; i < fromFile.length; i++) {
@@ -36,19 +28,12 @@ class Population{
  }
  
   Population(int size, int dim, int snakeLength) {
-  this.board = new IntList[dim][dim];
-  
-  for(int i = 0; i < dim; i++) {
-      for(int j = 0; j < dim; j++) {
-       board[i][j] = new IntList(size);
-      }
-  }
-  
+ 
   bestLen = snakeLength; 
    
   players = new Player[size];
   for(int i = 0; i < size; i++) {
-   players[i] = new Player(height,height/dim,snakeLength,board,i+1);
+   players[i] = new Player(height,height/dim,snakeLength);
   }
 
   allTime = players[0];
@@ -58,7 +43,7 @@ class Population{
  void show(boolean showAll) {
   if(showAll) {
     for(int i = 0; i < players.length; i++) {
-       players[i].show(); 
+       players[i].show();
     }
   } else {
     players[0].show(); 
@@ -71,7 +56,7 @@ class Population{
     deaths++;
     players[0].calculateFitness();
     fitnessSum -= players[0].fitness();
-    players[0] = allTime.clone();   
+    players[0] = allTime.clone();  
   }
   
   if(players[1].dead()) {
@@ -172,10 +157,6 @@ class Population{
  
  public Player playerOne() {
   return players[0]; 
- }
- 
- public IntList[][] board() {
-  return board; 
  }
  
  public float average() {

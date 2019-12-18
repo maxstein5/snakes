@@ -221,10 +221,20 @@ public void show(int xpos, int ypos, int w, int h) {
     for(int layer = 0; layer < NETWORK_SIZE; layer++) {
       int offset = (max(NETWORK_LAYER_SIZES) - NETWORK_LAYER_SIZES[layer])/2;
       for(int neuron = 0; neuron < NETWORK_LAYER_SIZES[layer]; neuron++){
-        color outputCol = color(127+127f*output[layer][neuron],0,127-127f*output[layer][neuron]);
+        color outputCol = color(256f*sqrt(abs(output[layer][neuron])),0,0);
+        if (output[layer][neuron] < 0) {
+          outputCol = color(0,0,256f*sqrt(abs(output[layer][neuron])));
+        }
+        
         fill(outputCol);
         strokeWeight(3);
-        stroke(225/2 + bias[layer][neuron]*255/2);
+        if(layer != 0) {
+        outputCol = color(256f*sqrt(abs(bias[layer][neuron])),0,0);
+        if (bias[layer][neuron] < 0) {
+          outputCol = color(0,0,256f*sqrt(abs(bias[layer][neuron])));
+        }
+        }
+        stroke(outputCol);
         ellipse(xpos + layer*xBlock + xBlock/4, ypos + (neuron+offset)*yBlock,yBlock-3,yBlock-3);
         fill(255);
         
@@ -232,20 +242,30 @@ public void show(int xpos, int ypos, int w, int h) {
           for(int prevNeuron = 0; prevNeuron < NETWORK_LAYER_SIZES[layer-1]; prevNeuron++) {
             float oneWeight = weights[layer][neuron][prevNeuron];
             
-            strokeWeight(3*abs(oneWeight));
-            outputCol = color(127 + 127f*output[layer-1][prevNeuron]*oneWeight,0,127-127f*output[layer-1][prevNeuron]*oneWeight);
+            strokeWeight(6*abs(oneWeight));
+            float cR = 256f*sqrt(output[layer-1][prevNeuron]);
+            float cB = 0;
+            outputCol = color(cR,0,0);
+            if (output[layer-1][prevNeuron]*oneWeight < 0) {
+              cB = 256f*sqrt(abs(output[layer-1][prevNeuron]));
+              cR = 0;
+              outputCol = color(0,0,cB);
+            }
             stroke(outputCol);
-            line(xpos + (layer-1)*xBlock + yBlock + xBlock/4, ypos + (prevNeuron + prevOffset)*yBlock + (yBlock/2), xpos + layer*xBlock + xBlock/4, ypos + (neuron+offset)*yBlock + (yBlock/2));
+            if(dist(cR,0,cB,0,0,0) > 75) {
+              line(xpos + (layer-1)*xBlock + yBlock + xBlock/4, ypos + (prevNeuron + prevOffset)*yBlock + (yBlock/2), xpos + layer*xBlock + xBlock/4-2, ypos + (neuron+offset)*yBlock + (yBlock/2));
+            }
             strokeWeight(1);
             stroke(0);
           }
         }
         textSize(12);
-        text(nf(round(100*output[layer][neuron])/100f,0,2) ,xpos + layer*xBlock + xBlock/4, ypos + (neuron+offset)*yBlock + yBlock/2);
+        textAlign(CENTER);
+        //text(nf(round(100*output[layer][neuron])/100f,0,2),xpos + layer*xBlock + xBlock/4 + (yBlock-3)/2, ypos + (neuron+offset)*yBlock + (yBlock+6)/2);
      } 
      prevOffset = offset;
     } 
-   stroke(0);
+   stroke(0); //<>//
 }
 
 //----------------------------------------------------------------------------- saving to table
