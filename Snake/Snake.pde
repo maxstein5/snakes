@@ -1,7 +1,7 @@
 //For general settings:
-private int size = 30;
-private int snakeLength = 6;
-private int seed = 5;
+private int size = 50;
+private int snakeLength = 5;
+private int seed = 13;
 
 private boolean training = true;
 private boolean showcase = false;
@@ -25,7 +25,7 @@ World board;
 
 void setup() {
   if (training) {
-    this.size = 30;
+    this.size = 20;
     if(files.length < 1) {
       this.newPop = true;
       this.fromEach = this.popSize;
@@ -33,7 +33,7 @@ void setup() {
       this.newPop = false;
       this.fromEach = this.popSize/files.length;
     }
-    this.popSize = 7000;
+    this.popSize = 10000;
     this.save = true;
   } else if (showcase) {
     this.size = 30;
@@ -69,7 +69,10 @@ void setup() {
  board.newGen();
 }
 
-void draw() {  
+void draw() {
+  board.update();
+  main.show(showAll);
+  
   main.update(mutationRate);
   if(save) {
     if(name == "") {
@@ -78,9 +81,6 @@ void draw() {
         main.playerOne().brain().saveToCSV(name);
     }
   }
-  
-  board.update();
-  main.show(showAll);
 }
 
 void keyPressed() {

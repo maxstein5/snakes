@@ -25,16 +25,8 @@ class World {
     background(color(100,100,100));
     fill(255);
     stroke(255);
-    
     for(int i = 0; i < size; i++) {
       for(int j = 0; j < size; j++) {
-        //if(main.board()[i][j][0] != 0) {
-        //  stroke(0);
-        //  fill(main.board()[i][j][0]);
-        //} else {
-        //  stroke(255);
-        //  fill(255);
-        //}
         rect(i*frame/size,j*frame/size,frame/size,frame/size);
       }
     }

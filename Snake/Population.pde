@@ -7,16 +7,14 @@ class Population{
  private double bestFitAll = 0;
  private int bestLen = 0;
  
- private int[][][] board;
  
  Population(int size, int dim, int snakeLength, int numEach, String... fromFile) {
-  this.board = new int[dim][dim][size];
   
   bestLen = snakeLength; 
    
   players = new Player[size];
   for(int i = 0; i < size; i++) {
-   players[i] = new Player(height,height/dim,snakeLength,board,i);
+   players[i] = new Player(height,height/dim,snakeLength);
   }
   
   for(int i = 0; i < fromFile.length; i++) {
@@ -30,13 +28,12 @@ class Population{
  }
  
   Population(int size, int dim, int snakeLength) {
-  this.board = new int[dim][dim][size];
-  
+ 
   bestLen = snakeLength; 
    
   players = new Player[size];
   for(int i = 0; i < size; i++) {
-   players[i] = new Player(height,height/dim,snakeLength,board,i);
+   players[i] = new Player(height,height/dim,snakeLength);
   }
 
   allTime = players[0];
@@ -46,7 +43,7 @@ class Population{
  void show(boolean showAll) {
   if(showAll) {
     for(int i = 0; i < players.length; i++) {
-       players[i].show(); 
+       players[i].show();
     }
   } else {
     players[0].show(); 
@@ -59,14 +56,14 @@ class Population{
     deaths++;
     players[0].calculateFitness();
     fitnessSum -= players[0].fitness();
-    players[0] = allTime.clone(0);
+    players[0] = allTime.clone();  
   }
   
   if(players[1].dead()) {
     deaths++;
     players[1].calculateFitness();
     fitnessSum -= players[1].fitness();
-    players[1] = currentBest.clone(1);
+    players[1] = currentBest.clone();
   }
   
   for(int i = 0; i < players.length; i++) {
@@ -100,7 +97,7 @@ class Population{
      Player parent1 = selectParent();
      Player parent2 = selectParent();
      
-     players[i] = parent1.breedWith(parent2, i);
+     players[i] = parent1.breedWith(parent2);
      players[i].mutate(rate);
    }
   }
@@ -160,10 +157,6 @@ class Population{
  
  public Player playerOne() {
   return players[0]; 
- }
- 
- public int[][][] board() {
-  return board; 
  }
  
  public float average() {

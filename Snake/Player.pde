@@ -1,5 +1,9 @@
 class Player {
   
+  //for animation
+  private boolean dying = false;
+  private int phase;
+  
   //transient traits
   private boolean dead = false;
   
@@ -8,7 +12,6 @@ class Player {
   private final int FRAME;
   private final int STARTING_LEN;
   private final int DIM;
-  private int ID;
   private Network brain;
   private Food food;
   private color marker = color(random(255),random(255),random(255));
@@ -20,22 +23,19 @@ class Player {
   private int dir = 3;
   private int len;
   private int countDown = 500;
-  private int[][][] board;
   
 //------------------------------------------------------------------- constructor
 
-  public Player(int FRAME, int BLOCK_SIZE, int len, int[][][] board, int ID) {
+  public Player(int FRAME, int BLOCK_SIZE, int len) {
     pos = new ArrayList<PVector>();
-    brain = new Network(14,10,4);
+    brain = new Network(12,10,8,4);
     
-    this.ID = ID;
     this.BLOCK_SIZE = BLOCK_SIZE;
     this.DIM = FRAME/BLOCK_SIZE;
     this.len = len;
     this.STARTING_LEN = len;
-    this.food = new Food(BLOCK_SIZE, DIM, board, ID);
+    this.food = new Food(BLOCK_SIZE, DIM);
     this.FRAME = FRAME;
-    this.board = board;
     
     init(floor(DIM/2),floor(DIM/2), len);
   }
@@ -43,7 +43,6 @@ class Player {
   private void init(int xpos, int ypos, int length) {
     for(int i = 0; i < length; i++) {
       pos.add(new PVector(xpos + i,ypos));
-      board[(int)head().x][(int)head().y][ID] = marker;
     }
   }
   
@@ -55,6 +54,10 @@ class Player {
       for(int i = 0; i < pos.size(); i++) {
         rect(pos.get(i).x*BLOCK_SIZE,pos.get(i).y*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
       }
+      //if (dying && len > 2) {
+      //  splash(head(), phase, 8); 
+      //  phase = phase + 1;
+      //}
   }
    
 //-------------------------------------------------------------------- move
@@ -67,9 +70,9 @@ class Player {
     getDirection();
     if(countDown == 0) {
      die(); 
-    } else {
+    }
     
-    board[(int)pos.get(0).x][(int)pos.get(0).y][ID] = 0;
+    
     pos.remove(0);
     
     switch (dir) {
@@ -113,11 +116,7 @@ class Player {
               break;
     }
     
-    if(!dead) {
-      board[(int)head().x][(int)head().y][ID] = marker;
-    }
     countDown--;
-    }
   }
   
 //-------------------------------------------------------------------- check next position for death or win
@@ -129,22 +128,19 @@ class Player {
       die();
     } else if (food.pos().x == x && food.pos().y == y) {
       grow();  
-      food.place(board);
+      food.place();
     }
   }
   
 //-------------------------------------------------------------------- die and grow
  
   private void die() {
-    for(int i = 0; i < len-1; i++) {
-      board[(int)pos.get(i).x][(int)pos.get(i).y][ID] = 0;
-    }
     dead = true;
+    dying = true;
   }
 
   private void grow() {
     pos.add(0,new PVector(pos.get(0).x + (pos.get(1).x - pos.get(0).x),pos.get(0).y + (pos.get(1).y - pos.get(0).y)));
-    board[(int)pos.get(0).x][(int)pos.get(0).y][ID] = marker;
     len++;
     countDown = 500;
   }
@@ -159,9 +155,6 @@ class Player {
     float wallRight = 0;
     float wallUp = 0;
     float wallDown = 0;
-    
-    float foodX = (float)(head().x-food.pos().x)/DIM;
-    float foodY = (float)(head().y-food.pos().y)/DIM;
     
     float foodUp = 0;
     float foodDown = 0;
@@ -267,7 +260,7 @@ class Player {
     wallUp = 1f/acc;
     
     
-    dir = brain.step(wallLeft, wallRight, wallUp, wallDown, foodLeft, foodRight, foodUp, foodDown, bodyLeft, bodyRight, bodyUp, bodyDown, foodX, foodY);
+    dir = brain.step(wallLeft, wallRight, wallUp, wallDown, foodLeft, foodRight, foodUp, foodDown, bodyLeft, bodyRight, bodyUp, bodyDown);
     lifetime++;
   }
   
@@ -281,9 +274,9 @@ class Player {
    }
  }
  
-  public Player clone(int id) {
-    Player clone = new Player(FRAME, BLOCK_SIZE, STARTING_LEN, board, id);
-    clone.setBrain(brain.clone());
+  public Player clone() {
+    Player clone = new Player(FRAME, BLOCK_SIZE, STARTING_LEN);
+    clone.setBrain(brain.clone(1));
     clone.setMarker(marker);
 
     return clone;
@@ -299,8 +292,8 @@ class Player {
     marker = color(r, g, b);
   }
   
-  public Player breedWith(Player parent, int id) {
-    Player child = new Player(FRAME, BLOCK_SIZE, STARTING_LEN,board, id);
+  public Player breedWith(Player parent) {
+    Player child = new Player(FRAME, BLOCK_SIZE, STARTING_LEN);
     child.setBrain(brain.combineWith(parent.brain()));
     child.setMarker(marker);
     return child;
@@ -315,18 +308,10 @@ public void setBrain(Network brain) {
   this.marker = parent; 
  }
  
- public void setID(int id) {
-  this.ID = id; 
- }
- 
 //-------------------------------------------------------------------- getters
  
  public Network brain() {
    return brain;
- }
- 
- public int ID() {
-  return ID; 
  }
    
   public ArrayList<PVector> pos() {
@@ -357,5 +342,24 @@ public void setBrain(Network brain) {
   public color marker() {
    return marker; 
   }
-
+  
+//-------------------------------------------------------------------- animation  
+ 
+ private void splash(PVector pos, int phase, int splashSize) {
+   fill(255,(255/splashSize)*(phase),(255/splashSize)*(phase));
+   
+   if (phase < splashSize) {
+   int displacement = phase * BLOCK_SIZE;
+     rect(pos.x + displacement,pos.y,BLOCK_SIZE,BLOCK_SIZE);
+     rect(pos.x - displacement,pos.y,BLOCK_SIZE,BLOCK_SIZE);
+     rect(pos.x,pos.y + displacement,BLOCK_SIZE,BLOCK_SIZE);
+     rect(pos.x,pos.y - displacement,BLOCK_SIZE,BLOCK_SIZE);
+     rect(pos.x + (sqrt(2)/2)*displacement,pos.y + (sqrt(2)/2)*displacement,BLOCK_SIZE,BLOCK_SIZE);
+     rect(pos.x - (sqrt(2)/2)*displacement,pos.y - (sqrt(2)/2)*displacement,BLOCK_SIZE,BLOCK_SIZE);
+     rect(pos.x - (sqrt(2)/2)*displacement,pos.y + (sqrt(2)/2)*displacement,BLOCK_SIZE,BLOCK_SIZE);
+     rect(pos.x + (sqrt(2)/2)*displacement,pos.y - (sqrt(2)/2)*displacement,BLOCK_SIZE,BLOCK_SIZE);
+   } else {
+     dying = false;
+   }
+ }
 }
