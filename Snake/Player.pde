@@ -28,7 +28,7 @@ class Player {
 
   public Player(int FRAME, int BLOCK_SIZE, int len) {
     pos = new ArrayList<PVector>();
-    brain = new Network(12,10,8,4);
+    brain = new Network(14,10,8,4);
     
     this.BLOCK_SIZE = BLOCK_SIZE;
     this.DIM = FRAME/BLOCK_SIZE;
@@ -54,10 +54,10 @@ class Player {
       for(int i = 0; i < pos.size(); i++) {
         rect(pos.get(i).x*BLOCK_SIZE,pos.get(i).y*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
       }
-      //if (dying && len > 2) {
-      //  splash(head(), phase, 8); 
-      //  phase = phase + 1;
-      //}
+      if (dying && len > 2) {
+        splash(head(), phase, 8); 
+        phase = phase + 1;
+      }
   }
    
 //-------------------------------------------------------------------- move
@@ -136,7 +136,7 @@ class Player {
  
   private void die() {
     dead = true;
-    dying = true;
+    dying = false;
   }
 
   private void grow() {
@@ -155,6 +155,9 @@ class Player {
     float wallRight = 0;
     float wallUp = 0;
     float wallDown = 0;
+    
+    float foodX = (float)(head().x-food.pos().x)/DIM;
+    float foodY = (float)(head().y-food.pos().y)/DIM;
     
     float foodUp = 0;
     float foodDown = 0;
@@ -260,7 +263,7 @@ class Player {
     wallUp = 1f/acc;
     
     
-    dir = brain.step(wallLeft, wallRight, wallUp, wallDown, foodLeft, foodRight, foodUp, foodDown, bodyLeft, bodyRight, bodyUp, bodyDown);
+    dir = brain.step(wallLeft, wallRight, wallUp, wallDown, foodLeft, foodRight, foodUp, foodDown, bodyLeft, bodyRight, bodyUp, bodyDown, foodX, foodY);
     lifetime++;
   }
   

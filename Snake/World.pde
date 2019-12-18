@@ -56,28 +56,25 @@ class World {
   private void HUD() {
     fill(255);
     textSize(16);
-    text("Deaths: " + deaths,frame+10,frame-40);
-    text("Best Snake Length: " + record,frame+10,frame-20); 
-    graph(frame+10,frame-200,280,140);
-    showBrain(frame + 10,10,width-(frame)-20,500);
+    graph(frame+10,frame-(frame/5),width-frame-20, frame/5-10);
+    showBrain(frame + 10,10,width-(frame)-20,height*2/3 - 20);
   }
   
   private void showBrain(int x, int y, int w, int h) {
-    main.playerOne().brain().show(x,y,w,h);
-
     fill(230);
-    int textW = 100;
-    int textH = 50;
+    int textW = (width-frame)/4;
+    int textH = frame/20;
+    main.playerOne().brain().show(x,y,w,h-textH);
     int xpos = ((width+frame-textW)/2);
-    int ypos = h + 20;
-    rect(xpos,ypos,textW,textH);
+    int ypos = h - textH + 20;
+    rect(xpos-10,ypos,textW+20,textH);
     fill(0);
     textSize(textH);
     textAlign(CENTER);
     text(nf(main.playerOne().len(),3),xpos+textW/2,ypos+textH-5);
     textSize(16);
-    text("Current Score",xpos+textW/2,ypos + textH + 16);
-    text("Fitness: " + main.playerOne().fitness(),xpos+textW/2,ypos + textH + 32); 
+    text("Deaths: " + deaths,xpos+textW/2,ypos + textH + 16);
+    text("Best Snake Length: " + record,xpos+textW/2,ypos + textH + 32); 
     textAlign(LEFT);
     
   }
